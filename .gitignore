@@ -1,7 +1,7 @@
-logs/
-dataset/evaluate/
-dataset/sourceData/
-dataset/train/
+logs/*
+dataset/evaluate/*
+dataset/sourceData/*
+dataset/train/*
 __pycache__/
-checkpoints/
+checkpoints/*
 .vscode/
