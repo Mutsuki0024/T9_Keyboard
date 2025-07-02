@@ -1,0 +1,6 @@
+python_Levenshtein==0.12.2
+python_Levenshtein==0.27.1
+PyYAML==6.0.2
+PyYAML==6.0.2
+torch==2.7.1+cu128
+tqdm==4.67.1

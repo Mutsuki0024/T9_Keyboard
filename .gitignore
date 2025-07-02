@@ -1,0 +1,7 @@
+logs/
+dataset/evaluate/
+dataset/sourceData/
+dataset/train/
+__pycache__/
+checkpoints/
+.vscode/

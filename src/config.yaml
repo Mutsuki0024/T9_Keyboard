@@ -1,0 +1,50 @@
+t9_map: {
+  'a': '2', 'b': '2', 'c': '2',
+  'd': '3', 'e': '3', 'f': '3',
+  'g': '4', 'h': '4', 'i': '4',
+  'j': '5', 'k': '5', 'l': '5',
+  'm': '6', 'n': '6', 'o': '6',
+  'p': '7', 'q': '7', 'r': '7', 's': '7',
+  't': '8', 'u': '8', 'v': '8',
+  'w': '9', 'x': '9', 'y': '9', 'z': '9',
+  ' ': ' '
+}
+
+
+data:
+  sourceDataDir: dataset/sourceData
+  trainDataDir: dataset/train
+  validDataDir: dataset/evaluate
+  digitVocab: vocab/digitVocab.json
+  charVocab: vocab/charVocab.json
+  maxSentenceLen: 25
+  minSentenceLen: 2
+  maxWordLen: 20
+  csvDelimiter: ','
+  digitCol: 0
+  textCol: 1
+  hasHeader: True
+
+train:
+  batchSize: 64
+  numEpochs: 5
+  lr: 0.001
+  weightDecay: 0.01
+  warmupSteps: 1000
+  maxGradNorm: 1.0
+  ckptDir: checkpoints/
+  device: cuda
+  numWorkers: 4
+  evalInterval : 2500
+  saveInterval : 5000
+  logsDir: logs/
+
+model:
+  dModel: 128
+  nhead: 8
+  numLayers: 4
+  dimFeedforward: 2048
+  dropout: 0.1
+  maxLen: 512
+  bestModel: checkpoints/model.pt
+  
