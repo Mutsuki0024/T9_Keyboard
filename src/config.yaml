@@ -34,16 +34,19 @@ train:
   maxGradNorm: 1.0
   ckptDir: checkpoints/
   device: cuda
+  resume: True
+  continue: False
+  checkpointPath: checkpoints/resume.pt
   numWorkers: 4
   evalInterval : 2500
   saveInterval : 5000
   logsDir: logs/
 
 model:
-  dModel: 128
+  dModel: 256
   nhead: 8
   numLayers: 4
-  dimFeedforward: 2048
+  dimFeedforward: 1024
   dropout: 0.1
   maxLen: 512
   bestModel: checkpoints/model.pt

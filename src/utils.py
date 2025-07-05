@@ -40,12 +40,13 @@ def textToNumber(text):
         return ''
 
 
-def saveCheckpoint(model, optimizer, scheduler, path: str):
-    #Save model, optimizer, scheduler states and current epoch.
+def saveCheckpoint(model, optimizer, scheduler, batch, path: str):
+    #Save model, optimizer, scheduler states and current batch
     state = {
         'model_state': model.state_dict(),
         'optimizer_state': optimizer.state_dict(),
-        'scheduler_state': scheduler.state_dict()
+        'scheduler_state': scheduler.state_dict(),
+        'batch': batch,
     }
     os.makedirs(os.path.dirname(path), exist_ok=True)
     torch.save(state, path)
@@ -53,13 +54,15 @@ def saveCheckpoint(model, optimizer, scheduler, path: str):
 
 def loadCheckpoint(path: str, model, optimizer=None, scheduler=None):
     #Load checkpoint, restore model (and optional optimizer, scheduler), return epoch.
-    state = torch.load(path, map_location='cpu')
+    device = next(model.parameters()).device
+    state = torch.load(path, map_location=device)
     model.load_state_dict(state['model_state'])
     if optimizer and 'optimizer_state' in state:
         optimizer.load_state_dict(state['optimizer_state'])
     if scheduler and 'scheduler_state' in state:
         scheduler.load_state_dict(state['scheduler_state'])
-    return state.get('epoch', None)
+        
+    return state.get('batch',None)
 
 
 def compute_cer(pred: str, ref: str) -> float:
@@ -144,12 +147,12 @@ def compute_sentence_accuracy(preds: torch.Tensor, labels: torch.Tensor, mask: t
             correct += 1
     return correct, total
 
-def writeLogs(avgLoss, charAcc, wordAcc, sentAcc):
+def writeLogs(batch, avgLoss, charAcc, wordAcc, sentAcc):
     outputDir = os.path.join(_cfgTrain['logsDir'], 'train_logs.csv')
     needWriteHeader = not os.path.exists(outputDir) or os.stat(outputDir).st_size==0
     with open(outputDir, 'a', newline='', encoding='utf-8') as fout:
         writer = csv.writer(fout)
         if needWriteHeader:
-            writer.writerow(['avgLoss','charAcc','wordAcc','sentAcc'])
-        writer.writerow([format(avgLoss, ".5f"), format(charAcc, ".5f"), format(wordAcc, ".5f"), format(sentAcc, ".5f")])
+            writer.writerow(['batch','avgLoss','charAcc','wordAcc','sentAcc'])
+        writer.writerow([format(batch,"<6"), format(avgLoss, ".5f"), format(charAcc, ".5f"), format(wordAcc, ".5f"), format(sentAcc, ".5f")])
         

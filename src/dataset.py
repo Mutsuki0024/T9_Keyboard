@@ -77,7 +77,7 @@ class T9Dataset(IterableDataset):
         #check the worker informeation
         workerInfo = get_worker_info()
         if workerInfo is None: #only 1 worker
-            filesToProcess = self.files
+            files_to_Process = self.files
         else:
             num_workers = workerInfo.num_workers
             worker_id = workerInfo.id

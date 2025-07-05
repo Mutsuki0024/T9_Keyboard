@@ -72,17 +72,32 @@ def train():
         lambda step: min((step+1)/warmup_steps, math.sqrt(warmup_steps/(step+1)))
     )
     
+    #resume from checkpoint
+    startBatch = 0
+    ckptPath = cfgTrain['checkpointPath']
+    if cfgTrain['resume'] and os.path.exists(ckptPath):
+        print(f"Resuming training from {ckptPath}")
+        startBatch = utils.loadCheckpoint(ckptPath, model, optimizer, scheduler)
+        if not cfgTrain['continue']:
+            startBatch = 0
+        print(f"Training will start on batch{startBatch}")
+    else:
+        print("Starting training from scratch.")
+    
     #Training loop
     #bestCer = float('inf')
     evalInterval = cfgTrain.get('evalInterval',5000)
     saveInterval = cfgTrain.get('saveInterval',10000)
     runningLoss = 0.0
-    counter=0
+    batchCounter=0
     charAcc, wordAcc, sentAcc = eval(model, device)
-    utils.writeLogs(0, charAcc, wordAcc, sentAcc)
+    utils.writeLogs(batchCounter, runningLoss, charAcc, wordAcc, sentAcc)
     
     model.train() #set training mode of model
-    for step,batch in enumerate(tqdm(loader, desc=f"Training batch {counter}")):
+    for step,batch in enumerate(tqdm(loader, desc=f"Training batch {batchCounter}")):
+        batchCounter += 1
+        if batchCounter < startBatch:
+            continue #pass trained batch
         inputIDs = batch['inputIDs'].to(device)
         labelIDs = batch['labelIDs'].to(device)
         mask = batch['attentionMask'].to(device)
@@ -113,6 +128,9 @@ def train():
             pred_str = ''.join(id2char[id] for id in pred_ids if id2char[id] != '<pad>')
             true_str = ''.join(id2char[id] for id in true_ids if id2char[id] != '<pad>')
             print(f"Batch {step+1}: \nInput: {inp_str} \nPred: {pred_str} \nTrue: {true_str}")
+            #clean cuda cache
+            if device=='cuda':
+                torch.cuda.empty_cache()
         
         if (step + 1) % evalInterval == 0:
             avgLoss = runningLoss/evalInterval
@@ -125,18 +143,18 @@ def train():
             word accurate = {wordAcc:.5f}
             sentence accute = {sentAcc:.5f}""")
             print(f'='*30+'\n')
-            utils.writeLogs(avgLoss, charAcc, wordAcc, sentAcc)
+            utils.writeLogs(batchCounter, avgLoss, charAcc, wordAcc, sentAcc)
             runningLoss = 0
             
         if (step + 1) % saveInterval == 0:
             ckptPath = os.path.join(cfgTrain.get('ckptDir'), f'batch{step+1}.pt')
             os.makedirs(os.path.dirname(ckptPath),exist_ok=True)
-            utils.saveCheckpoint(model,optimizer,scheduler,ckptPath)
-        counter += 1
+            utils.saveCheckpoint(model,optimizer,scheduler,batchCounter,ckptPath)
+
     
     ckptPath = os.path.join(cfgTrain.get('ckptDir'), 'final.pt')
     os.makedirs(os.path.dirname(ckptPath),exist_ok=True)
-    utils.saveCheckpoint(model,optimizer,scheduler,ckptPath)
+    utils.saveCheckpoint(model,optimizer,scheduler,batchCounter,ckptPath)
     print("Training completed.")
     
 if __name__ == '__main__':
