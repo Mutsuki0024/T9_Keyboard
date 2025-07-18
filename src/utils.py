@@ -12,6 +12,7 @@ def loadConfig(path: str = 'src/config.yaml') -> dict:
 
 
 def loadVocab(vacabPath:str):
+    
     #load a JSON file mapping token->id, return {token2id, id2token}
     try:
         with open(vacabPath, 'r', encoding='utf-8') as f:

@@ -46,6 +46,7 @@ class T9Dataset(IterableDataset):
         self.sentenceCheck = sentenceCheck
     
     def parseRow(self, row):
+        
         try:
             digits = row[self.digitCol].strip()
             text = row[self.textCol].strip()
@@ -97,6 +98,7 @@ class T9Dataset(IterableDataset):
                         
 
     def collate_fn(self, batch):
+        
         #padding for batch
         #determine bach max length
         batchSize = len(batch)
