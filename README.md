@@ -24,11 +24,13 @@ This README is based on the accompanying report “A Transformer-Based Text Pred
 
  - High validation accuracy:
 
-    98.6% character-level
+   - 98.6% character-level
 
-    95.4% word-level
+   - 95.4% word-level
 
-    70.0% sentence-level
+   - 70.0% sentence-level
+ 
+ ![Training_Loss](/figure2.gif)
 
  - Implemented with PyTorch
 
@@ -37,6 +39,8 @@ This README is based on the accompanying report “A Transformer-Based Text Pred
  - Model Architecture
 
 ## Pipeline summary:
+
+![Pipeline](/figure1.gif)
 
 Input digit sequence (0–9 and space)
 
