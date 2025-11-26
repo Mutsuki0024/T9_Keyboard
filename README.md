@@ -29,8 +29,7 @@ This README is based on the accompanying report “A Transformer-Based Text Pred
    - 95.4% word-level
 
    - 70.0% sentence-level
- 
- ![Training_Loss](/figure2.gif)
+
 
  - Implemented with PyTorch
 
@@ -40,7 +39,7 @@ This README is based on the accompanying report “A Transformer-Based Text Pred
 
 ## Pipeline summary:
 
-![Pipeline](/figure1.gif)
+![Pipeline](/figure1.png)
 
 Input digit sequence (0–9 and space)
 
@@ -101,3 +100,5 @@ Ambiguity of T9 digit sequences
 A large proportion of very short sentences, which inherently map to many plausible outputs
 
 Despite this, the model accurately predicts most words and reconstructs coherent sentences.
+
+![Training_Loss](/figure2.png)
